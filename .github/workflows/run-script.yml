@@ -29,17 +29,18 @@ jobs:
         IPVOID_API_KEY: ${{ secrets.IPVOID_API_KEY }}
         WHOISJSON_API_KEY: ${{ secrets.WHOISJSON_API_KEY }}
       run: |
-        mkdir -p results
+        mkdir -p result
         for file in Upload\ Your\ Domain\ List\ Here/*.txt; do
-          python domainabuse_script.py "$file" results
+          python domainabuse_script.py "$file" result
         done
 
     - name: Upload the results
       uses: actions/upload-artifact@v2
       with:
         name: results
-        path: results/  # Path to the folder where your script saves the CSV file
+        path: result/  # Path to the folder where your script saves the CSV file
 
     - name: Clean up
+      if: success()
       run: |
         rm Upload\ Your\ Domain\ List\ Here/*.txt
