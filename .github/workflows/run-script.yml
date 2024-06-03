@@ -37,5 +37,5 @@ jobs:
     - name: Upload the results
       uses: actions/upload-artifact@v2
       with:
-        name: results
-        path: results/  # Path to the folder where your script saves the CSV file
+        name: result
+        path: result/  # Path to the folder where your script saves the CSV file
