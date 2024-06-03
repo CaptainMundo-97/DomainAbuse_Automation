@@ -3,7 +3,7 @@ name: Run Domain Processing Script
 on:
   push:
     paths:
-      - '**/*.txt'  # Triggers the action when a .txt file is pushed
+      - 'Upload Your Domain List Here/*.txt'  # Triggers the action when a .txt file is pushed in the specific folder
 
 jobs:
   run-script:
@@ -29,7 +29,8 @@ jobs:
         IPVOID_API_KEY: ${{ secrets.IPVOID_API_KEY }}
         WHOISJSON_API_KEY: ${{ secrets.WHOISJSON_API_KEY }}
       run: |
-        python your_script.py domains.txt
+        mkdir -p results
+        python domainabuse_script.py "Upload Your Domain List Here/$(ls Upload\ Your\ Domain\ List\ Here)" results
 
     - name: Upload the results
       uses: actions/upload-artifact@v2
