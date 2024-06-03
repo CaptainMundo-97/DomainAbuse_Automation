@@ -31,6 +31,7 @@ jobs:
       run: |
         mkdir -p result
         for file in Upload\ Your\ Domain\ List\ Here/*.txt; do
+          echo "Processing $file"
           python domainabuse_script.py "$file" result
         done
 
