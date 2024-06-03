@@ -1,4 +1,3 @@
-import sys
 import requests
 import csv
 import json
@@ -8,30 +7,25 @@ from datetime import datetime
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-print(f"Python version: {sys.version}")
 
 # Function to load configuration from a JSON file
 def load_config(file_path):
     with open(file_path, 'r') as file:
         return json.load(file)
 
-# Load configuration for base URLs
-config = load_config('DomainAbuse_Automation/config.json')
+
+# Load configuration
+config = load_config('config.json')
+API_KEYS = config['api_keys']
 BASE_URLS = config['base_urls']
 
-# Read API keys from environment variables
-API_KEYS = {
-    'virustotal': os.getenv('VIRUSTOTAL_API_KEY'),
-    'ipvoid': os.getenv('IPVOID_API_KEY'),
-    'whoisjson': os.getenv('WHOISJSON_API_KEY')
-}
 
 # Function to read domains from a file
 def read_domains(file_path):
     with open(file_path, 'r') as file:
         domains = [line.strip() for line in file]
-    print(f"Read {len(domains)} domains from {file_path}")
     return domains
+
 
 # Function to query VirusTotal
 def query_virustotal(domain):
@@ -42,6 +36,7 @@ def query_virustotal(domain):
     else:
         return {'error': 'Not found'}
 
+
 # Function to query IPVoid
 def query_ipvoid(domain):
     params = {'key': API_KEYS['ipvoid'], 'host': domain}
@@ -50,6 +45,7 @@ def query_ipvoid(domain):
         return response.json()
     else:
         return {'error': 'Not found'}
+
 
 # Function to query WhoisJSON with retry logic
 def query_whois(domain):
@@ -71,6 +67,7 @@ def query_whois(domain):
     except requests.exceptions.RequestException as e:
         print(f"WHOIS Request Exception: {e}")
         return {'error': 'Not found'}
+
 
 # Function to extract necessary fields from VirusTotal response
 def extract_virustotal_data(data):
@@ -99,6 +96,7 @@ def extract_virustotal_data(data):
         'vt_last_analysis_stats': attributes.get('last_analysis_stats', 'Not found')
     }
 
+
 # Function to extract necessary fields from IPVoid response
 def extract_ipvoid_data(data):
     if 'error' in data:
@@ -118,6 +116,7 @@ def extract_ipvoid_data(data):
         'ipvoid_country': server.get('country_name', 'Not found'),
         'ipvoid_isp': server.get('isp', 'Not found')
     }
+
 
 # Function to extract necessary fields from WhoisJSON response
 def extract_whois_data(data):
@@ -179,6 +178,7 @@ def extract_whois_data(data):
         'whois_owner_changed': owner.get('changed', 'Not found')
     }
 
+
 # Function to generate a unique filename
 def generate_unique_filename(base_name, extension):
     counter = 1
@@ -187,6 +187,7 @@ def generate_unique_filename(base_name, extension):
         counter += 1
         filename = f"{base_name}{counter:03d}.{extension}"
     return filename
+
 
 # Function to save results to a CSV file
 def save_results_to_csv(results, base_filename):
@@ -213,10 +214,11 @@ def save_results_to_csv(results, base_filename):
         dict_writer.writerows(results)
     print(f"Results saved to {filename}")
 
-def main(input_path, output_path):
-    domains = read_domains(input_path)
+
+def main():
+    domains = read_domains('domains.txt')
     if not domains:
-        print("No domains found in the input file.")
+        print("No domains found in domains.txt")
         return
 
     results = []
@@ -258,15 +260,9 @@ def main(input_path, output_path):
         time.sleep(1)
 
     # Generate the base filename with the current date
-    base_filename = os.path.join(output_path, f"domains_result_{datetime.now().strftime('%Y%m%d')}_")
-    print(f"Saving results to {base_filename}")
+    base_filename = f"domains_result_{datetime.now().strftime('%Y%m%d')}_"
     save_results_to_csv(results, base_filename)
 
+
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python your_script.py <input_path> <output_path>")
-        sys.exit(1)
-    input_path = sys.argv[1]
-    output_path = sys.argv[2]
-    print(f"Running script with input_path: {input_path} and output_path: {output_path}")
-    main(input_path, output_path)
+    main()
