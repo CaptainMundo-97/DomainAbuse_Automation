@@ -1,0 +1,41 @@
+name: Run Domain Processing Script
+
+on:
+  push:
+    paths:
+      - '**/*.txt'  # Triggers the action when a .txt file is pushed
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository content
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'  # Replace with your Python version
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+
+    - name: Run the Python script
+      env:
+        VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
+        IPVOID_API_KEY: ${{ secrets.IPVOID_API_KEY }}
+        WHOISJSON_API_KEY: ${{ secrets.WHOISJSON_API_KEY }}
+      run: |
+        echo "$VIRUSTOTAL_API_KEY" > virustotal_api_key.txt
+        echo "$IPVOID_API_KEY" > ipvoid_api_key.txt
+        echo "$WHOISJSON_API_KEY" > whoisjson_api_key.txt
+        python your_script.py domains.txt
+
+    - name: Upload the results
+      uses: actions/upload-artifact@v2
+      with:
+        name: results
+        path: results/  # Path to the folder where your script saves the CSV file
