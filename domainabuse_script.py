@@ -14,10 +14,16 @@ def load_config(file_path):
         return json.load(file)
 
 
-# Load configuration
+# Load configuration for base URLs
 config = load_config('config.json')
-API_KEYS = config['api_keys']
 BASE_URLS = config['base_urls']
+
+# Read API keys from environment variables
+API_KEYS = {
+    'virustotal': os.getenv('VIRUSTOTAL_API_KEY'),
+    'ipvoid': os.getenv('IPVOID_API_KEY'),
+    'whoisjson': os.getenv('WHOISJSON_API_KEY')
+}
 
 
 # Function to read domains from a file
@@ -260,7 +266,7 @@ def main():
         time.sleep(1)
 
     # Generate the base filename with the current date
-    base_filename = f"domains_result_{datetime.now().strftime('%Y%m%d')}_"
+    base_filename = f"results/domains_result_{datetime.now().strftime('%Y%m%d')}_"
     save_results_to_csv(results, base_filename)
 
 
