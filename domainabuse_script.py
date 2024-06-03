@@ -3,6 +3,7 @@ import csv
 import json
 import time
 import os
+import sys
 from datetime import datetime
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -221,10 +222,10 @@ def save_results_to_csv(results, base_filename):
     print(f"Results saved to {filename}")
 
 
-def main():
-    domains = read_domains('domains.txt')
+def main(input_path, output_path):
+    domains = read_domains(input_path)
     if not domains:
-        print("No domains found in domains.txt")
+        print("No domains found in the input file.")
         return
 
     results = []
@@ -266,9 +267,14 @@ def main():
         time.sleep(1)
 
     # Generate the base filename with the current date
-    base_filename = f"results/domains_result_{datetime.now().strftime('%Y%m%d')}_"
+    base_filename = os.path.join(output_path, f"domains_result_{datetime.now().strftime('%Y%m%d')}_")
     save_results_to_csv(results, base_filename)
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) != 3:
+        print("Usage: python your_script.py <input_path> <output_path>")
+        sys.exit(1)
+    input_path = sys.argv[1]
+    output_path = sys.argv[2]
+    main(input_path, output_path)
