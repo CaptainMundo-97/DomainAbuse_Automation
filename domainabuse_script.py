@@ -16,7 +16,7 @@ def load_config(file_path):
         return json.load(file)
 
 # Load configuration for base URLs
-config = load_config('config.json')
+config = load_config('DomainAbuse_Automation/config.json')
 BASE_URLS = config['base_urls']
 
 # Read API keys from environment variables
