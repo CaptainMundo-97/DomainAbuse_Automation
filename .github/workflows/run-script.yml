@@ -30,7 +30,9 @@ jobs:
         WHOISJSON_API_KEY: ${{ secrets.WHOISJSON_API_KEY }}
       run: |
         mkdir -p results
-        python domainabuse_script.py "Upload Your Domain List Here/$(ls Upload\ Your\ Domain\ List\ Here)" results
+        for file in Upload\ Your\ Domain\ List\ Here/*.txt; do
+          python domainabuse_script.py "$file" results
+        done
 
     - name: Upload the results
       uses: actions/upload-artifact@v2
