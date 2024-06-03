@@ -196,10 +196,10 @@ def generate_unique_filename(base_name, extension):
     return filename
 
 
-# Function to save result to a CSV file
-def save_result_to_csv(result, base_filename):
-    if not result:
-        print("No result to save.")
+# Function to save results to a CSV file
+def save_results_to_csv(results, base_filename):
+    if not results:
+        print("No results to save.")
         return
 
     fieldnames = [
@@ -218,8 +218,8 @@ def save_result_to_csv(result, base_filename):
     with open(filename, 'w', newline='') as file:
         dict_writer = csv.DictWriter(file, fieldnames=fieldnames)
         dict_writer.writeheader()
-        dict_writer.writerows(result)
-    print(f"result saved to {filename}")
+        dict_writer.writerows(results)
+    print(f"Results saved to {filename}")
 
 
 def main(input_path, output_path):
@@ -228,7 +228,7 @@ def main(input_path, output_path):
         print("No domains found in the input file.")
         return
 
-    result = []
+    results = []
 
     for domain in domains:
         print(f"Processing domain: {domain}")
@@ -261,14 +261,14 @@ def main(input_path, output_path):
             result['whois'] = f"Error: {e}"
             print(f"Error querying WhoisJSON for {domain}: {e}")
 
-        result.append(result)
+        results.append(result)  # Corrected this line
 
         # Sleep to avoid rate limits
         time.sleep(1)
 
     # Generate the base filename with the current date
     base_filename = os.path.join(output_path, f"domains_result_{datetime.now().strftime('%Y%m%d')}_")
-    save_result_to_csv(result, base_filename)
+    save_results_to_csv(results, base_filename)
 
 
 if __name__ == "__main__":
