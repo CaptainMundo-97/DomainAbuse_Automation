@@ -32,7 +32,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add *.csv
+          git add "Domain Results/*.csv"
           git commit -m "Add processed domain results"
           git push
 
