@@ -29,9 +29,6 @@ jobs:
         IPVOID_API_KEY: ${{ secrets.IPVOID_API_KEY }}
         WHOISJSON_API_KEY: ${{ secrets.WHOISJSON_API_KEY }}
       run: |
-        echo "$VIRUSTOTAL_API_KEY" > virustotal_api_key.txt
-        echo "$IPVOID_API_KEY" > ipvoid_api_key.txt
-        echo "$WHOISJSON_API_KEY" > whoisjson_api_key.txt
         python your_script.py domains.txt
 
     - name: Upload the results
