@@ -180,14 +180,15 @@ def extract_whois_data(data):
 
 
 # Function to generate a unique filename
-def generate_unique_filename(base_name, extension):
+def generate_unique_filename(base_name, extension, directory):
+    if not os.path.exists(directory):
+        os.makedirs(directory)
     counter = 1
-    filename = f"{base_name}{counter:03d}.{extension}"
+    filename = f"{directory}/{base_name}{counter:03d}.{extension}"
     while os.path.exists(filename):
         counter += 1
-        filename = f"{base_name}{counter:03d}.{extension}"
+        filename = f"{directory}/{base_name}{counter:03d}.{extension}"
     return filename
-
 
 # Function to save results to a CSV file
 def save_results_to_csv(results, base_filename):
@@ -206,7 +207,8 @@ def save_results_to_csv(results, base_filename):
         'whois_owner_created', 'whois_owner_changed'
     ]
 
-    filename = generate_unique_filename(base_filename, "csv")
+    directory = "Domain Results"
+    filename = generate_unique_filename(base_filename, "csv", directory)
 
     with open(filename, 'w', newline='') as file:
         dict_writer = csv.DictWriter(file, fieldnames=fieldnames)
@@ -214,7 +216,7 @@ def save_results_to_csv(results, base_filename):
         dict_writer.writerows(results)
     print(f"Results saved to {filename}")
 
-
+# Main function
 def main():
     domains = read_domains('domains.txt')
     if not domains:
@@ -263,6 +265,6 @@ def main():
     base_filename = f"domains_result_{datetime.now().strftime('%Y%m%d')}_"
     save_results_to_csv(results, base_filename)
 
-
 if __name__ == "__main__":
     main()
+
